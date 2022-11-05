@@ -52,6 +52,22 @@ const run = async () => {
         },
       });
     });
+
+    // Create new product
+
+    app.post("/api/v1/products", async (req, res) => {
+      const product = req.body;
+
+      const result = await productsCollection.insertOne(product);
+      const newProduct = Object.assign({ _id: result.insertedId }, product);
+
+      res.status(201).json({
+        status: "success",
+        data: {
+          product: newProduct,
+        },
+      });
+    });
   } finally {
     // console.log("all done")
   }
