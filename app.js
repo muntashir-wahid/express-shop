@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const morgan = require("morgan");
 require("dotenv").config();
 
@@ -28,6 +28,7 @@ const run = async () => {
     const productsCollection = client.db("expressShop").collection("products");
 
     // Read all products data
+
     app.get("/api/v1/products", async (req, res) => {
       const query = {};
 
@@ -49,6 +50,23 @@ const run = async () => {
         count,
         data: {
           products,
+        },
+      });
+    });
+
+    // Read a single product
+
+    app.get("/api/v1/products/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const query = { _id: ObjectId(id) };
+
+      const product = await productsCollection.findOne(query);
+
+      res.status(200).json({
+        status: "success",
+        data: {
+          product,
         },
       });
     });
