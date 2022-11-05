@@ -127,12 +127,16 @@ const run = async () => {
     // Route definations
     // -------------------- //
 
-    app.route("/api/v1/products").get(getProducts).post(createProduct);
-    app
-      .route("/api/v1/products/:id")
+    const productsRouter = express.Router();
+
+    productsRouter.route("/").get(getProducts).post(createProduct);
+    productsRouter
+      .route("/:id")
       .get(getProduct)
       .patch(updateProduct)
       .delete(deleteProduct);
+
+    app.use("/api/v1/products", productsRouter);
   } finally {
     // console.log("all done")
   }
