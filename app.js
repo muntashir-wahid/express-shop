@@ -23,6 +23,42 @@ const client = new MongoClient(uri, {
 
 // Route Handlers
 
+const run = async () => {
+  try {
+    const productsCollection = client.db("expressShop").collection("products");
+
+    // Read all products data
+    app.get("/api/v1/products", async (req, res) => {
+      const query = {};
+
+      const products = await productsCollection
+        .find(query)
+        .map((product) => {
+          return {
+            _id: product._id,
+            productName: product.productName,
+            price: product.price,
+          };
+        })
+        .toArray();
+
+      const count = await productsCollection.estimatedDocumentCount();
+
+      res.status(200).json({
+        status: "success",
+        count,
+        data: {
+          products,
+        },
+      });
+    });
+  } finally {
+    // console.log("all done")
+  }
+};
+
+run().catch((error) => console.error(error));
+
 app.get("/", (req, res) => {
   res.status(200).json({
     status: "success",
