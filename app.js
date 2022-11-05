@@ -86,6 +86,28 @@ const run = async () => {
         },
       });
     });
+
+    // Update a product
+
+    app.patch("/api/v1/products/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const filter = { _id: ObjectId(id) };
+      const updateDoc = {
+        $set: req.body,
+      };
+
+      const result = await productsCollection.updateOne(filter, updateDoc);
+
+      res.status(200).json({
+        status: "success",
+        data: {
+          _id: id,
+          isUpdated: result.acknowledged,
+          modifiedCount: result.modifiedCount,
+        },
+      });
+    });
   } finally {
     // console.log("all done")
   }
