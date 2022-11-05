@@ -27,9 +27,12 @@ const run = async () => {
   try {
     const productsCollection = client.db("expressShop").collection("products");
 
-    // Read all products data
+    // ----------------------- //
+    // Handler functions
+    // ---------------------- //
 
-    app.get("/api/v1/products", async (req, res) => {
+    // Read all Products
+    const getProducts = async (req, res) => {
       const query = {};
 
       const products = await productsCollection
@@ -52,17 +55,15 @@ const run = async () => {
           products,
         },
       });
-    });
+    };
 
     // Read a single product
-
-    app.get("/api/v1/products/:id", async (req, res) => {
+    const getProduct = async (req, res) => {
       const id = req.params.id;
 
       const query = { _id: ObjectId(id) };
 
       const product = await productsCollection.findOne(query);
-      console.log(product);
 
       res.status(200).json({
         status: "success",
@@ -70,11 +71,10 @@ const run = async () => {
           product,
         },
       });
-    });
+    };
 
     // Create new product
-
-    app.post("/api/v1/products", async (req, res) => {
+    const createProduct = async (req, res) => {
       const product = req.body;
 
       const result = await productsCollection.insertOne(product);
@@ -86,11 +86,10 @@ const run = async () => {
           product: newProduct,
         },
       });
-    });
+    };
 
     // Update a product
-
-    app.patch("/api/v1/products/:id", async (req, res) => {
+    const updateProduct = async (req, res) => {
       const id = req.params.id;
 
       const filter = { _id: ObjectId(id) };
@@ -108,11 +107,11 @@ const run = async () => {
           modifiedCount: result.modifiedCount,
         },
       });
-    });
+    };
 
     // Delete a product
 
-    app.delete("/api/v1/products/:id", async (req, res) => {
+    const deleteProduct = async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
 
@@ -122,7 +121,18 @@ const run = async () => {
         status: "success",
         data: null,
       });
-    });
+    };
+
+    // --------------------  //
+    // Route definations
+    // -------------------- //
+
+    app.route("/api/v1/products").get(getProducts).post(createProduct);
+    app
+      .route("/api/v1/products/:id")
+      .get(getProduct)
+      .patch(updateProduct)
+      .delete(deleteProduct);
   } finally {
     // console.log("all done")
   }
