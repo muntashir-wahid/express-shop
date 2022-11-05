@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
+const { MongoClient, ServerApiVersion } = require("mongodb");
 const morgan = require("morgan");
+require("dotenv").config();
 
 const app = express();
 
@@ -9,6 +11,15 @@ const app = express();
 app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
+
+// Database setup
+
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.hjjckmu.mongodb.net/?retryWrites=true&w=majority`;
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverApi: ServerApiVersion.v1,
+});
 
 // Route Handlers
 
